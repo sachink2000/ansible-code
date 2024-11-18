@@ -1,0 +1,8 @@
+---
+# variables for nschange_role
+# Written by Sachin Kadam
+filename: /etc/resolv.conf
+destpath: /etc/
+newfile: /etc/resolv.conf-bkp
+
+

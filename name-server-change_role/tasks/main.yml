@@ -1,0 +1,57 @@
+---
+  #------------------------------------------------------------------------------
+  # Author: Sachin Kadam 
+  # Description: Role to change the resolve.conf file from Linux & Ubuntu servers
+  # NOTE: This role will replace the resolve.conf file, existing file will be renamed as resolv.conf.bkp
+  #------------------------------------------------------------------------------
+
+  ##########################################################
+    # Check if Redhat sunscription is Valid #
+  ##########################################################
+
+  - name: "Check the Redhat subscription status is valid"
+    shell:  subscription-manager status |  grep "Status:" | awk '{print $NF}'
+    changed_when: false
+    when: ansible_distribution == "RedHat"
+    register: echo_results
+
+  ##########################################################
+    # Check Resolve.Conf file #
+  ##########################################################
+
+  - name: "Check if resolv.conf exists"
+    stat: 
+      path: "{{ filename }}"
+    register: file_data
+
+  - name: "Check if resolv.conf exists"
+    debug: 
+      msg: "Resolv.Conf file exists"
+    when: file_data.stat.exists
+
+  ##########################################################
+    # Rename Resolve.Conf file #
+  ##########################################################
+
+  - name: Rename file
+    shell: mv "{{ filename }}" "{{ newfile }}"
+ 
+  ##########################################################
+    # Copy Resolve.Conf file #
+  ##########################################################
+
+  - name: Copy File
+    copy: 
+      src: "resolv.conf"
+      dest: "{{ destpath }}"
+      mode: "0644"
+      owner: root
+      group: root
+
+  ##########################################################
+    # Check file permission owner and group #
+  ##########################################################
+
+  - name: Check file details
+    command: echo `ls -ld  /etc/resolv.conf`
+
